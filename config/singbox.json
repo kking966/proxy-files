@@ -5,13 +5,13 @@
         "tag": "local",
         "type": "udp",
         "server": "223.5.5.5",
-        "comment": "本地DNS，用於解析國內域名，UDP最快"
+        "comment": "本地 DNS：解析国内域名为主，UDP 速度最快"
       },
       {
         "tag": "foreign",
         "type": "udp",
         "server": "8.8.8.8",
-        "comment": "優化：移除 'detour'，改為直連UDP，作為備用"
+        "comment": "备用外部 DNS（直连 UDP）"
       },
       {
         "tag": "fakeip",
@@ -24,16 +24,17 @@
       {
         "clash_mode": "direct",
         "server": "local",
-        "comment": "Clash 直連模式時，使用本地DNS"
+        "comment": "Clash 直连模式时使用本地 DNS（优先）"
       },
       {
         "clash_mode": "global",
         "server": "fakeip",
-        "comment": "Clash 全局模式時，使用 FakeIP"
+        "comment": "Clash 全局模式下走 FakeIP（避免直连泄漏）"
       },
       {
         "query_type": "HTTPS",
-        "action": "reject"
+        "action": "reject",
+        "comment": "拒绝对 DoH/DoT 本身的 HTTPS 查询（按需保留）"
       },
       {
         "domain_suffix": [
@@ -42,7 +43,7 @@
           "xn--ngstr-lra8j.com"
         ],
         "server": "local",
-        "comment": "優化：Google CN 域名是國內IP，應使用 local"
+        "comment": "Google CN 域名为国内 IP，强制 local"
       },
       {
         "rule_set": [
@@ -51,7 +52,7 @@
           "geosite-apple"
         ],
         "server": "local",
-        "comment": "所有國內相關規則集，使用 local"
+        "comment": "国内相关规则集优先走 local"
       },
       {
         "query_type": [
@@ -60,15 +61,15 @@
         ],
         "server": "fakeip",
         "rewrite_ttl": 1,
-        "comment": "關鍵：所有常規網站查詢(A/AAAA)都交給 FakeIP。它必須在 'geosite-cn' 規則之後"
+        "comment": "把常规 A/AAAA 查询交给 fakeip（必须在 geosite-cn 之后）"
       },
       {
-        "comment": "保底規則：其他所有查詢（例如 MX, TXT）都使用本地DNS",
+        "comment": "保底：其他所有查询（如 MX/TXT）走 local",
         "server": "local"
       }
     ],
     "final": "local",
-    "comment": "優化： 'final' 規則應指向一個快速的直連DNS。在 'fakeip' 規則存在下，它幾乎不會被觸發，但 'local' 是最安全的選擇",
+    "comment": "final 指向快速直连 DNS，本配置选择 local（最安全）",
     "strategy": "ipv4_only",
     "independent_cache": true,
     "reverse_mapping": true
@@ -265,21 +266,9 @@
       "outbounds": []
     },
     {
-      "tag": "🇭🇰 香港自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
-    },
-    {
       "tag": "🇯🇵 日本手动",
       "type": "selector",
       "outbounds": []
-    },
-    {
-      "tag": "🇯🇵 日本自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
     },
     {
       "tag": "🇸🇬 狮城手动",
@@ -287,43 +276,9 @@
       "outbounds": []
     },
     {
-      "tag": "🇸🇬 獅城自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
-    },
-    {
       "tag": "🇺🇲 美国手动",
       "type": "selector",
       "outbounds": []
-    },
-    {
-      "tag": "🇺🇲 美國自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
-    },
-    {
-      "tag": "🇹🇼 臺灣手动",
-      "type": "selector",
-      "outbounds": []
-    },
-    {
-      "tag": "🇹🇼 臺灣自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
-    },
-    {
-      "tag": "🇰🇷 韓國手动",
-      "type": "selector",
-      "outbounds": []
-    },
-    {
-      "tag": "🇰🇷 韓國自動",
-      "type": "urltest",
-      "outbounds": [],
-      "hidden": true
     },
     {
       "tag": "🐸 手动选择",
@@ -333,14 +288,7 @@
     {
       "tag": "♻️ 自动选择",
       "type": "urltest",
-      "outbounds": [
-        "🇭🇰 香港自動",
-        "🇯🇵 日本自動",
-        "🇸🇬 獅城自動",
-        "🇺🇲 美國自動",
-        "🇹🇼 臺灣自動",
-        "🇰🇷 韓國自動"
-      ]
+      "outbounds": []
     },
     {
       "tag": "🍃 延迟辅助",
@@ -372,8 +320,6 @@
         "🇯🇵 日本手动",
         "🇸🇬 狮城手动",
         "🇺🇲 美国手动",
-        "🇹🇼 臺灣手动",
-        "🇰🇷 韓國手动",
         "🐸 手动选择",
         "♻️ 自动选择",
         "🍃 延迟辅助",
@@ -565,7 +511,7 @@
         "type": "remote",
         "format": "binary",
         "url": "https://gh-proxy.com/https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.srs",
-        "download_detour": "🎯 全球直連"
+        "download_detour": "🎯 全球直连"
       },
       {
         "tag": "geosite-paypal",
@@ -646,7 +592,7 @@
   "inbounds": [
     {
       "tag": "dns-in",
-      "type": "dns",
+      "type": "direct",
       "listen": "::",
       "listen_port": 1053
     },
