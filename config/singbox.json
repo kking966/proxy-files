@@ -592,9 +592,10 @@
   "inbounds": [
     {
       "tag": "dns-in",
-      "type": "direct",
+      "type": "dns",
       "listen": "::",
       "listen_port": 1053
+      "detour": "local"
     },
     {
       "tag": "http-in",
